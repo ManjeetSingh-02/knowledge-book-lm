@@ -1,7 +1,8 @@
 // internal-imports
-import { corsConfig, errorHandler, loadModules } from '@/core/index.js';
+import { auth, corsConfig, errorHandler, loadModules } from '@/core/index.js';
 
 // external-imports
+import { toNodeHandler } from 'better-auth/node';
 import cors from 'cors';
 import express from 'express';
 
@@ -13,6 +14,7 @@ export default async function createApp() {
   // attach middlewares
   application
     .use(cors(corsConfig))
+    .all('/api/v1/auth/{*any}', toNodeHandler(auth))
     .use(express.json())
     .use(express.urlencoded({ extended: true }));
 
