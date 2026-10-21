@@ -78,9 +78,40 @@ model Workspace {
   description String?  @db.Text
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  sources     Source[]
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("workspace")
+}
+
+enum SourceStatus {
+  PENDING
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum SourceType {
+  PDF
+  WEBSITE
+  TEXT
+}
+
+model Source {
+  id          String       @id @default(uuid())
+  workspaceId String
+  type        SourceType
+  status      SourceStatus @default(PENDING)
+  title       String       @default("Untitled Source")
+  metadata    Json?
+  content     String?      @db.Text
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@map("source")
 }
