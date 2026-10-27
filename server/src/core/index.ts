@@ -5,6 +5,7 @@ export { env } from './config/env.js';
 
 // lib
 export { auth } from './lib/auth.js';
+export { uploadToCloudinary } from './lib/cloudinary.js';
 export { uploadPDF } from './lib/multer.js';
 
 // loader
