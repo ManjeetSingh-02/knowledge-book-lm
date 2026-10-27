@@ -5,6 +5,7 @@ export { env } from './config/env.js';
 
 // lib
 export { auth } from './lib/auth.js';
+export { uploadPDF } from './lib/multer.js';
 
 // loader
 export { loadModules } from './loader/modules.js';
