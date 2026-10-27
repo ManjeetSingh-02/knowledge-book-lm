@@ -1,7 +1,7 @@
 // internal-imports
-import { validateZodSchema } from '@/core/index.js';
+import { uploadPDF, validateZodSchema } from '@/core/index.js';
 import { controller } from './controller.js';
-import { sourceIdSchema } from './zod.js';
+import { createSourceSchema, sourceIdSchema, validatePdfFile } from './zod.js';
 
 // external-imports
 import { Router, type RequestHandler } from 'express';
@@ -14,6 +14,15 @@ router.get('/', controller.listSources as RequestHandler);
 
 // @route GET /:id
 router.get('/:sid', validateZodSchema(sourceIdSchema), controller.listSource as RequestHandler);
+
+// @route POST /
+router.post(
+  '/',
+  uploadPDF,
+  validateZodSchema(createSourceSchema),
+  validatePdfFile,
+  controller.createSource as RequestHandler
+);
 
 // @route DELETE /
 router.delete('/', controller.deleteSources as RequestHandler);

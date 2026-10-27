@@ -1,6 +1,7 @@
 // internal-imports
-import { ErrorResponse, prisma, SuccessResponse, type Validated } from '@/core/index.js';
-import type { sourceIdSchema } from './zod.js';
+import { ErrorResponse, inngest, prisma, SuccessResponse, type Validated } from '@/core/index.js';
+import { preProcessSource } from './utils.js';
+import type { createSourceSchema, sourceIdSchema } from './zod.js';
 import type { workspaceIdSchema } from '../zod.js';
 
 // external-imports
@@ -71,6 +72,32 @@ export const controller = {
       new SuccessResponse({
         data: source,
         message: 'Source retrieved successfully',
+      })
+    );
+  },
+
+  // @controller POST /
+  createSource: async (
+    request: Request & Validated<typeof workspaceIdSchema & typeof createSourceSchema>,
+    response: Response
+  ) => {
+    // pre-process source
+    const source = await preProcessSource(
+      request.validated.params.id,
+      request.validated.body,
+      request.file
+    );
+
+    // invoke inngest to process the source asynchronously
+    await inngest.send({ name: 'source/process', data: { id: source.id } });
+
+    // return response with success
+    return response.status(201).json(
+      new SuccessResponse({
+        data: {
+          id: source.id,
+        },
+        message: 'Source created successfully',
       })
     );
   },
