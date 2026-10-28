@@ -5,7 +5,12 @@ import { prisma, type Source } from '@/core/index.js';
 export async function fetchSource(id: Source['id']) {
   const source = await prisma.source.findUnique({
     where: { id },
-    select: { id: true, prompt: true, userId: true },
+    select: {
+      id: true,
+      cloudinaryPublicId: true,
+      content: true,
+      type: true,
+    },
   });
   if (!source) throw new Error('Source not found');
 
@@ -15,7 +20,7 @@ export async function fetchSource(id: Source['id']) {
 // function to update source
 export async function updateSource(
   id: Source['id'],
-  data: Partial<Pick<Source, 'content' | 'status' | 'title'>>
+  data: Partial<Pick<Source, 'content' | 'status'>>
 ) {
   return prisma.source.update({
     where: { id },
