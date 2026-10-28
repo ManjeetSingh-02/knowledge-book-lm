@@ -137,7 +137,10 @@ export const controller = {
         workspaceId,
         ...data,
         ...(data.type === 'PDF' && {
-          url: await uploadToCloudinary(workspaceId, request.file as Express.Multer.File),
+          cloudinaryPublicId: await uploadToCloudinary(
+            workspaceId,
+            request.file as Express.Multer.File
+          ),
         }),
       },
     });
