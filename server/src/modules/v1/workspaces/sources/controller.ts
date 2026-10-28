@@ -5,13 +5,16 @@ import {
   prisma,
   SuccessResponse,
   uploadToCloudinary,
+  type Authenticated,
   type Validated,
 } from '@/core/index.js';
+import { processSourceChannel } from '@/inngest/index.js';
 import type { createSourceSchema, sourceIdSchema } from './zod.js';
 import type { workspaceIdSchema } from '../zod.js';
 
 // external-imports
 import type { Request, Response } from 'express';
+import { getClientSubscriptionToken } from 'inngest/react';
 
 // controller for module
 export const controller = {
@@ -50,7 +53,7 @@ export const controller = {
     );
   },
 
-  // @controller GET /:id
+  // @controller GET /:sid
   listSource: async (
     request: Request & Validated<typeof workspaceIdSchema & typeof sourceIdSchema>,
     response: Response
@@ -78,6 +81,44 @@ export const controller = {
       new SuccessResponse({
         data: source,
         message: 'Source retrieved successfully',
+      })
+    );
+  },
+
+  // @controller GET /:sid/realtime
+  listSourceRealtimeToken: async (
+    request: Request & Authenticated & Validated<typeof sourceIdSchema>,
+    response: Response
+  ) => {
+    // find source
+    const source = await prisma.source.findFirst({
+      where: {
+        id: request.validated.params.sid,
+        userId: request.user.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    // if source not found, throw error
+    if (!source)
+      throw new ErrorResponse({
+        code: 404,
+        message: 'Source not found',
+      });
+
+    // generate a realtime token for the source
+    const token = await getClientSubscriptionToken(inngest, {
+      channel: processSourceChannel({ sourceId: source.id }),
+      topics: ['status'],
+    });
+
+    // return response with success
+    return response.status(200).json(
+      new SuccessResponse({
+        data: { token },
+        message: 'Realtime token generated successfully',
       })
     );
   },

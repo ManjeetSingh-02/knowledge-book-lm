@@ -12,8 +12,15 @@ export const router = Router({ mergeParams: true });
 // @route GET /
 router.get('/', controller.listSources as RequestHandler);
 
-// @route GET /:id
+// @route GET /:sid
 router.get('/:sid', validateZodSchema(sourceIdSchema), controller.listSource as RequestHandler);
+
+// @route GET /:sid/realtime
+router.get(
+  '/:sid/realtime',
+  validateZodSchema(sourceIdSchema),
+  controller.listSourceRealtimeToken as RequestHandler
+);
 
 // @route POST /
 router.post(
