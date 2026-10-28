@@ -1,6 +1,12 @@
 // internal-imports
-import { ErrorResponse, inngest, prisma, SuccessResponse, type Validated } from '@/core/index.js';
-import { preProcessSource } from './utils.js';
+import {
+  ErrorResponse,
+  inngest,
+  prisma,
+  SuccessResponse,
+  uploadToCloudinary,
+  type Validated,
+} from '@/core/index.js';
 import type { createSourceSchema, sourceIdSchema } from './zod.js';
 import type { workspaceIdSchema } from '../zod.js';
 
@@ -81,12 +87,19 @@ export const controller = {
     request: Request & Validated<typeof workspaceIdSchema & typeof createSourceSchema>,
     response: Response
   ) => {
-    // pre-process source
-    const source = await preProcessSource(
-      request.validated.params.id,
-      request.validated.body,
-      request.file
-    );
+    const workspaceId = request.validated.params.id;
+    const data = request.validated.body;
+
+    // create a new source
+    const source = await prisma.source.create({
+      data: {
+        workspaceId,
+        ...data,
+        ...(data.type === 'PDF' && {
+          url: await uploadToCloudinary(workspaceId, request.file as Express.Multer.File),
+        }),
+      },
+    });
 
     // invoke inngest to process the source asynchronously
     await inngest.send({ name: 'source/process', data: { id: source.id } });
