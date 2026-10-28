@@ -17,17 +17,20 @@ export const createSourceSchema = z.object({
   body: z.discriminatedUnion('type', [
     z
       .object({
+        title: z.string().trim().nonempty().max(50),
         type: z.literal(SourceType.PDF),
       })
       .strict(),
     z
       .object({
+        title: z.string().trim().nonempty().max(50),
         type: z.literal(SourceType.WEBSITE),
         url: z.url(),
       })
       .strict(),
     z
       .object({
+        title: z.string().trim().nonempty().max(50),
         type: z.literal(SourceType.TEXT),
         content: z.string().trim().nonempty(),
       })
