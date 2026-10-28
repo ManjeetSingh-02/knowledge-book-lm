@@ -2,7 +2,7 @@
 import { env } from '../config/env.js';
 
 // external-imports
-import { PrismaClient, SourceType } from './generated/client.js';
+import { PrismaClient, SourceStatus, SourceType, type Source } from './generated/client.js';
 import { PrismaPg } from '@prisma/adapter-pg';
 
 // prisma client instance
@@ -11,4 +11,4 @@ const prisma = new PrismaClient({
 });
 
 // export prisma client and types
-export { prisma, SourceType };
+export { prisma, SourceStatus, SourceType, type Source };

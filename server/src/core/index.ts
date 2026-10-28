@@ -21,7 +21,7 @@ export { errorHandler } from './middleware/error.js';
 export { validateZodSchema } from './middleware/zod.js';
 
 // prisma
-export { prisma, SourceType } from './prisma/client.js';
+export { prisma, SourceStatus, SourceType, type Source } from './prisma/client.js';
 
 // response
 export { ErrorResponse } from './response/error.js';
