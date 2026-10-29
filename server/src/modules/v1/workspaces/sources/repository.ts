@@ -7,6 +7,7 @@ export async function fetchSource(id: Source['id']) {
     where: { id },
     select: {
       id: true,
+      workspaceId: true,
       cloudinaryPublicId: true,
       content: true,
       url: true,
