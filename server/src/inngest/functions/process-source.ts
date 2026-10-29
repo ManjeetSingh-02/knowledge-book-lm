@@ -3,6 +3,7 @@ import { inngest } from '@/core/index.js';
 import { fetchSource, updateSource } from '@/modules/v1/workspaces/sources/repository.js';
 import { processSourceChannel } from '../channels/process-source.js';
 import { chunkSource } from '../utils/chunk-source.js';
+import { indexSource } from '../utils/index-source.js';
 
 export const processSource = inngest.createFunction(
   {
@@ -33,6 +34,9 @@ export const processSource = inngest.createFunction(
 
       // chunk the source
       const chunks = await step.run('chunk-source', () => chunkSource(source));
+
+      // index the source
+      await step.run('index-source', () => indexSource(chunks, source.workspaceId, source.id));
 
       // mark the source as ready
       await step.run('mark-source-ready', () => updateSource(source.id, { status: 'READY' }));
