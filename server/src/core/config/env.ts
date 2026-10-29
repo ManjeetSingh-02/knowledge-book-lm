@@ -22,6 +22,9 @@ const envSchema = z.object({
   CLOUDINARY_API_SECRET: z.string().nonempty({ error: 'CLOUDINARY_API_SECRET is required' }),
   CLOUDINARY_CLOUD_NAME: z.string().nonempty({ error: 'CLOUDINARY_CLOUD_NAME is required' }),
   FIRECRAWL_API_KEY: z.string().nonempty({ error: 'FIRECRAWL_API_KEY is required' }),
+  OPENAI_API_KEY: z.string().nonempty({ error: 'OPENAI_API_KEY is required' }),
+  PINECONE_API_KEY: z.string().nonempty({ error: 'PINECONE_API_KEY is required' }),
+  PINECONE_INDEX_NAME: z.string().nonempty({ error: 'PINECONE_INDEX_NAME is required' }),
 });
 
 // function to validate environment variables
