@@ -22,6 +22,9 @@
   },
   "type": "module",
   "dependencies": {
+    "@langchain/openai": "^1.8.0",
+    "@langchain/textsplitters": "^1.0.2",
+    "@pinecone-database/pinecone": "^9.1.0",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "better-auth": "^1.7.8",
@@ -32,6 +35,7 @@
     "firecrawl": "^4.51.0",
     "inngest": "^4.26.0",
     "multer": "^2.5.0",
+    "pdf-parse": "^2.4.5",
     "pg": "^8.23.1",
     "winston": "^3.19.0",
     "zod": "^4.6.7"
