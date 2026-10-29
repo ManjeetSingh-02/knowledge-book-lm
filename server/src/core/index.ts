@@ -5,7 +5,7 @@ export { env } from './config/env.js';
 
 // lib
 export { auth } from './lib/auth.js';
-export { uploadToCloudinary } from './lib/cloudinary.js';
+export { getSignedCloudinaryDownloadUrl, uploadToCloudinary } from './lib/cloudinary.js';
 export { scrapeWebsite } from './lib/firecrawl.js';
 export { inngest } from './lib/inngest.js';
 export { uploadPDF } from './lib/multer.js';
