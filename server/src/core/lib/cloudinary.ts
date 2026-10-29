@@ -37,6 +37,6 @@ export function getSignedCloudinaryDownloadUrl(publicId: string) {
   return cloudinary.utils.private_download_url(publicId, 'pdf', {
     type: 'authenticated',
     resource_type: 'raw',
-    expires_at: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour
+    expires_at: Math.floor(Date.now() / 1000) + 5 * 60, // 5 minutes
   });
 }
