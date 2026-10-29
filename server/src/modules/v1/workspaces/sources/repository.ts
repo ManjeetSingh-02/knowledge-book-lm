@@ -9,6 +9,7 @@ export async function fetchSource(id: Source['id']) {
       id: true,
       cloudinaryPublicId: true,
       content: true,
+      url: true,
       type: true,
     },
   });
