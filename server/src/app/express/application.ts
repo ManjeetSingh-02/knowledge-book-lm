@@ -16,7 +16,7 @@ export default async function createApp() {
   // attach middlewares
   application
     .use(cors(corsConfig))
-    .all('/api/v1/auth/{*any}', toNodeHandler(auth))
+    .all('/api/auth/{*any}', toNodeHandler(auth))
     .use(express.json())
     .use(express.urlencoded({ extended: true }))
     .use('/api/inngest', serve({ client: inngest, functions }));
