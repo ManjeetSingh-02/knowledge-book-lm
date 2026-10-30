@@ -1,6 +1,7 @@
 // internal-imports
 import {
   ErrorResponse,
+  getSignedCloudinaryDownloadUrl,
   inngest,
   prisma,
   SuccessResponse,
@@ -55,7 +56,7 @@ export const controller = {
 
   // @controller GET /:sid
   listSource: async (
-    request: Request & Validated<typeof workspaceIdSchema & typeof sourceIdSchema>,
+    request: Request & Validated<typeof workspaceIdSchema> & Validated<typeof sourceIdSchema>,
     response: Response
   ) => {
     // find source
@@ -79,7 +80,13 @@ export const controller = {
     // return response with success
     return response.status(200).json(
       new SuccessResponse({
-        data: source,
+        data: {
+          ...source,
+          ...(source.type === 'PDF' &&
+            source.cloudinaryPublicId && {
+              url: getSignedCloudinaryDownloadUrl(source.cloudinaryPublicId),
+            }),
+        },
         message: 'Source retrieved successfully',
       })
     );
@@ -125,7 +132,7 @@ export const controller = {
 
   // @controller POST /
   createSource: async (
-    request: Request & Validated<typeof workspaceIdSchema & typeof createSourceSchema>,
+    request: Request & Validated<typeof workspaceIdSchema> & Validated<typeof createSourceSchema>,
     response: Response
   ) => {
     const workspaceId = request.validated.params.id;
@@ -177,7 +184,7 @@ export const controller = {
 
   // @controller DELETE /:id
   deleteSource: async (
-    request: Request & Validated<typeof workspaceIdSchema & typeof sourceIdSchema>,
+    request: Request & Validated<typeof workspaceIdSchema> & Validated<typeof sourceIdSchema>,
     response: Response
   ) => {
     // delete source
