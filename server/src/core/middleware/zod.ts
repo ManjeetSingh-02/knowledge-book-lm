@@ -24,7 +24,10 @@ export function validateZodSchema<T extends z.ZodObject>(schema: T) {
       });
 
     // add validated data to request.validated
-    request.validated = result.data;
+    request.validated = {
+      ...request.validated,
+      ...result.data,
+    };
 
     // forward request to next middleware
     next();
