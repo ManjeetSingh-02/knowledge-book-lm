@@ -1,6 +1,7 @@
 // internal-imports
 import { authenticate, validateZodSchema } from '@/core/index.js';
 import { controller } from './controller.js';
+import { router as conversationRouter } from './conversations/route.js';
 import { router as sourceRouter } from './sources/route.js';
 import { createWorkspaceSchema, updateWorkspaceSchema, workspaceIdSchema } from './zod.js';
 
@@ -12,6 +13,9 @@ export const router = Router();
 
 // all routes in this module are protected by authentication middleware
 router.use(authenticate);
+
+// routes for conversations module
+router.use('/:id/conversations', validateZodSchema(workspaceIdSchema), conversationRouter);
 
 // routes for sources module
 router.use('/:id/sources', validateZodSchema(workspaceIdSchema), sourceRouter);
