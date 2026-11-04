@@ -21,13 +21,16 @@ import { getClientSubscriptionToken } from 'inngest/react';
 export const controller = {
   // @controller GET /
   listSources: async (
-    request: Request & Validated<typeof workspaceIdSchema>,
+    request: Request & Authenticated & Validated<typeof workspaceIdSchema>,
     response: Response
   ) => {
     // find all sources
     const sources = await prisma.source.findMany({
       where: {
         workspaceId: request.validated.params.id,
+        workspace: {
+          userId: request.user.id,
+        },
       },
       orderBy: {
         updatedAt: 'desc',
@@ -56,7 +59,10 @@ export const controller = {
 
   // @controller GET /:sid
   listSource: async (
-    request: Request & Validated<typeof workspaceIdSchema> & Validated<typeof sourceIdSchema>,
+    request: Request &
+      Authenticated &
+      Validated<typeof workspaceIdSchema> &
+      Validated<typeof sourceIdSchema>,
     response: Response
   ) => {
     // find source
@@ -64,6 +70,9 @@ export const controller = {
       where: {
         id: request.validated.params.sid,
         workspaceId: request.validated.params.id,
+        workspace: {
+          userId: request.user.id,
+        },
       },
       omit: {
         workspaceId: true,
@@ -94,14 +103,20 @@ export const controller = {
 
   // @controller GET /:sid/realtime
   listSourceRealtimeToken: async (
-    request: Request & Authenticated & Validated<typeof sourceIdSchema>,
+    request: Request &
+      Authenticated &
+      Validated<typeof workspaceIdSchema> &
+      Validated<typeof sourceIdSchema>,
     response: Response
   ) => {
     // find source
     const source = await prisma.source.findFirst({
       where: {
         id: request.validated.params.sid,
-        userId: request.user.id,
+        workspaceId: request.validated.params.id,
+        workspace: {
+          userId: request.user.id,
+        },
       },
       select: {
         id: true,
@@ -132,11 +147,32 @@ export const controller = {
 
   // @controller POST /
   createSource: async (
-    request: Request & Validated<typeof workspaceIdSchema> & Validated<typeof createSourceSchema>,
+    request: Request &
+      Authenticated &
+      Validated<typeof workspaceIdSchema> &
+      Validated<typeof createSourceSchema>,
     response: Response
   ) => {
     const workspaceId = request.validated.params.id;
     const data = request.validated.body;
+
+    // find workspace
+    const workspace = await prisma.workspace.findFirst({
+      where: {
+        id: workspaceId,
+        userId: request.user.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!workspace) {
+      throw new ErrorResponse({
+        code: 404,
+        message: 'Workspace not found',
+      });
+    }
 
     // create a new source
     const source = await prisma.source.create({
@@ -168,13 +204,16 @@ export const controller = {
 
   // @controller DELETE /
   deleteSources: async (
-    request: Request & Validated<typeof workspaceIdSchema>,
+    request: Request & Authenticated & Validated<typeof workspaceIdSchema>,
     response: Response
   ) => {
     // delete all sources
     await prisma.source.deleteMany({
       where: {
         workspaceId: request.validated.params.id,
+        workspace: {
+          userId: request.user.id,
+        },
       },
     });
 
@@ -184,7 +223,10 @@ export const controller = {
 
   // @controller DELETE /:id
   deleteSource: async (
-    request: Request & Validated<typeof workspaceIdSchema> & Validated<typeof sourceIdSchema>,
+    request: Request &
+      Authenticated &
+      Validated<typeof workspaceIdSchema> &
+      Validated<typeof sourceIdSchema>,
     response: Response
   ) => {
     // delete source
@@ -192,6 +234,9 @@ export const controller = {
       where: {
         id: request.validated.params.sid,
         workspaceId: request.validated.params.id,
+        workspace: {
+          userId: request.user.id,
+        },
       },
     });
 
