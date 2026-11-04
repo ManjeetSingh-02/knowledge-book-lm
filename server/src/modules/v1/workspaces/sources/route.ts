@@ -34,7 +34,7 @@ router.post(
 // @route DELETE /
 router.delete('/', controller.deleteSources as RequestHandler);
 
-// @route DELETE /:id
+// @route DELETE /:sid
 router.delete(
   '/:sid',
   validateZodSchema(sourceIdSchema),
