@@ -221,7 +221,7 @@ export const controller = {
     return response.status(204).send();
   },
 
-  // @controller DELETE /:id
+  // @controller DELETE /:sid
   deleteSource: async (
     request: Request &
       Authenticated &
