@@ -118,13 +118,21 @@ model Source {
   @@map("source")
 }
 
+enum ConversationGenerationStatus {
+  PENDING
+  GENERATING
+  COMPLETED
+  FAILED
+}
+
 model Conversation {
-  id          String    @id @default(uuid())
-  workspaceId String
-  title       String    @default("Untitled Conversation")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  messages    Message[]
+  id               String                       @id @default(uuid())
+  workspaceId      String
+  generationStatus ConversationGenerationStatus @default(PENDING)
+  title            String                       @default("Untitled Conversation")
+  createdAt        DateTime                     @default(now())
+  updatedAt        DateTime                     @updatedAt
+  messages         Message[]
 
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
