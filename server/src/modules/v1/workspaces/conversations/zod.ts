@@ -7,3 +7,10 @@ export const conversationIdSchema = z.object({
     cid: z.uuid(),
   }),
 });
+
+// schema for createMessage
+export const createMessageSchema = conversationIdSchema.extend({
+  body: z.object({
+    message: z.unknown(),
+  }),
+});
