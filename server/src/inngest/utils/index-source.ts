@@ -1,18 +1,10 @@
 // internal-imports
-import { env } from '@/core/index.js';
+import { embeddings, getIndex } from './config.js';
 
 // external-imports
-import { OpenAIEmbeddings } from '@langchain/openai';
-import { Pinecone } from '@pinecone-database/pinecone';
 import { createHash } from 'crypto';
 
-const embeddings = new OpenAIEmbeddings({ model: 'text-embedding-3-small' });
-const pinecone = new Pinecone({ apiKey: env.PINECONE_API_KEY });
 const UPSERT_BATCH_SIZE = 100;
-
-function getIndex(workspaceId: string) {
-  return pinecone.index({ name: env.PINECONE_INDEX_NAME }).namespace(workspaceId);
-}
 
 export async function indexSource(chunks: string[], workspaceId: string, sourceId: string) {
   const index = getIndex(workspaceId);
