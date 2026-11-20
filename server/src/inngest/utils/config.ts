@@ -27,3 +27,7 @@ export function getTextFromParts(parts: Message['parts']): string {
     .join('\n')
     .trim();
 }
+
+export function buildSystemPrompt(sources: unknown[]): string {
+  return `You are a helpful assistant that answers questions based on the following sources:\n\n${sources.join('\n\n')}\n\nIf the answer is not contained within the sources, respond with "I don't know."`;
+}

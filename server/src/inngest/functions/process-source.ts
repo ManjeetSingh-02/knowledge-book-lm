@@ -16,7 +16,7 @@ export const processSource = inngest.createFunction(
     const { id } = event.data;
 
     // step to fetch the source
-    const source = await step.run('fetch-source', async () => fetchSource(id));
+    const source = await step.run('fetch-source', () => fetchSource(id));
 
     // create a channel
     const channel = processSourceChannel({ sourceId: source.id });

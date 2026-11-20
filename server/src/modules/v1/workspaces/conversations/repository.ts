@@ -10,6 +10,7 @@ export async function fetchConversation(id: Conversation['id']) {
       workspaceId: true,
       messages: {
         select: {
+          id: true,
           createdAt: true,
           parts: true,
           role: true,
