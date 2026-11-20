@@ -26,6 +26,8 @@ export {
   prisma,
   SourceStatus,
   SourceType,
+  type Conversation,
+  type Message,
   type MessageRole,
   type Prisma,
   type Source,

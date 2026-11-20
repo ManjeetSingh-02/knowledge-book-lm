@@ -6,6 +6,8 @@ import {
   PrismaClient,
   SourceStatus,
   SourceType,
+  type Conversation,
+  type Message,
   type MessageRole,
   type Prisma,
   type Source,
@@ -18,4 +20,13 @@ const prisma = new PrismaClient({
 });
 
 // export prisma client and types
-export { prisma, SourceStatus, SourceType, type MessageRole, type Prisma, type Source };
+export {
+  prisma,
+  SourceStatus,
+  SourceType,
+  type Conversation,
+  type Message,
+  type MessageRole,
+  type Prisma,
+  type Source,
+};
