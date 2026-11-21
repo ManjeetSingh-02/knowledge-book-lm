@@ -36,3 +36,23 @@ export async function updateConversation(
     data,
   });
 }
+
+export async function saveAssistantMessageAndUpdateConversationStatus(
+  id: Conversation['id'],
+  text: string
+) {
+  return await prisma.$transaction(async tx => {
+    await tx.message.create({
+      data: {
+        role: 'ASSISTANT',
+        conversationId: id,
+        parts: [{ type: 'text', text }],
+      },
+    });
+
+    await tx.conversation.update({
+      where: { id },
+      data: { generationStatus: 'COMPLETED' },
+    });
+  });
+}
