@@ -20,8 +20,6 @@ export const generateConversationMessageChannel = realtime.channel({
         status: z.enum([
           ConversationGenerationStatus.COMPLETED,
           ConversationGenerationStatus.FAILED,
-          ConversationGenerationStatus.GENERATING,
-          ConversationGenerationStatus.PENDING,
         ]),
       }),
     },
