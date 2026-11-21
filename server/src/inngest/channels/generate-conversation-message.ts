@@ -9,11 +9,20 @@ export const generateConversationMessageChannel = realtime.channel({
   name: ({ conversationId }: { conversationId: string }) =>
     `generate-conversation-message:${conversationId}`,
   topics: {
-    message: {
-      schema: z.object({
-        id: z.string(),
-        token: z.string(),
-      }),
+    data: {
+      schema: z
+        .object({
+          title: z.string().trim().nonempty().optional(),
+          message: z
+            .object({
+              id: z.string().trim().nonempty(),
+              token: z.string().nonempty(),
+            })
+            .optional(),
+        })
+        .refine(d => d.title !== undefined || d.message !== undefined, {
+          message: 'At least one field must be provided',
+        }),
     },
     status: {
       schema: z.object({
