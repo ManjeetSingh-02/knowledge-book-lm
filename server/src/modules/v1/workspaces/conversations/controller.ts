@@ -220,7 +220,7 @@ export const controller = {
     // generate a realtime token for the conversation
     const token = await getClientSubscriptionToken(inngest, {
       channel: generateConversationMessageChannel({ conversationId: conversation.id }),
-      topics: ['message', 'status'],
+      topics: ['data', 'status'],
     });
 
     // return response with success
