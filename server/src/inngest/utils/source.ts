@@ -90,22 +90,26 @@ export async function retrieveSources(
   const index = getIndex(workspaceId);
   const query = await getQuery(messages);
   const vector = await embeddings.embedQuery(query);
-  const response = await index.query({
-    vector,
+  const response = await index.documents.search({
+    scoreBy: [
+      {
+        type: 'dense_vector',
+        fields: ['values'],
+        values: vector,
+      },
+    ],
     topK: 5,
-    includeMetadata: true,
+    includeFields: ['content', 'sourceId', 'chunkIndex'],
   });
 
-  return (response.matches ?? [])
-    .map(match => ({
-      metadata: {
-        sourceId: match.metadata?.sourceId,
-        chunkIndex: match.metadata?.chunkIndex,
-      },
-      pageContent: match.metadata?.content ?? '',
-      score: match.score,
-    }))
-    .filter(doc => doc.pageContent.toString().trim().length > 0);
+  return response.matches.map(m => ({
+    metadata: {
+      sourceId: m.sourceId,
+      chunkIndex: m.chunkIndex,
+    },
+    pageContent: m.content,
+    score: m._score,
+  }));
 }
 
 // function to extract content from source
