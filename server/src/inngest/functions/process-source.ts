@@ -1,15 +1,26 @@
 // internal-imports
 import { inngest } from '@/core/index.js';
-import { fetchSource, updateSource } from '@/modules/v1/workspaces/sources/repository.js';
 import { processSourceChannel } from '../channels/process-source.js';
-import { chunkSource } from '../utils/chunk-source.js';
-import { indexSource } from '../utils/index-source.js';
+import { chunkSource, fetchSource, indexSource, updateSource } from '../utils/source.js';
 
 export const processSource = inngest.createFunction(
   {
     id: 'process-source',
     retries: 1,
     triggers: [{ event: 'source/process' }],
+    onFailure: async ({ event }) => {
+      // extract the soruce id
+      const { id } = event.data.event.data;
+
+      // create a channel
+      const channel = processSourceChannel({ sourceId: id });
+
+      // mark the source status as failed
+      await updateSource(id, { status: 'FAILED' });
+
+      // publish the source status as failed
+      await inngest.realtime.publish(channel.status, { status: 'FAILED' });
+    },
   },
   async ({ event, step }) => {
     // extract the soruce id
@@ -21,38 +32,28 @@ export const processSource = inngest.createFunction(
     // create a channel
     const channel = processSourceChannel({ sourceId: source.id });
 
-    try {
-      // mark the source as processing
-      await step.run('mark-source-processing', () =>
-        updateSource(source.id, { status: 'PROCESSING' })
-      );
+    // mark the source status as processing
+    await step.run('mark-source-processing', () =>
+      updateSource(source.id, { status: 'PROCESSING' })
+    );
 
-      // publish the source as processing
-      await step.realtime.publish('publish-source-processing', channel.status, {
-        status: 'PROCESSING',
-      });
+    // publish the source status as processing
+    await step.realtime.publish('publish-source-processing', channel.status, {
+      status: 'PROCESSING',
+    });
 
-      // chunk the source
-      const chunks = await step.run('chunk-source', () => chunkSource(source));
+    // chunk the source
+    const chunks = await step.run('chunk-source', () => chunkSource(source));
 
-      // index the source
-      await step.run('index-source', () => indexSource(chunks, source.workspaceId, source.id));
+    // index the source
+    await step.run('index-source', () => indexSource(chunks, source.workspaceId, source.id));
 
-      // mark the source as ready
-      await step.run('mark-source-ready', () => updateSource(source.id, { status: 'READY' }));
+    // mark the source status as ready
+    await step.run('mark-source-ready', () => updateSource(source.id, { status: 'READY' }));
 
-      // publish the source as ready
-      await step.realtime.publish('publish-source-ready', channel.status, {
-        status: 'READY',
-      });
-    } catch {
-      // mark the source as failed
-      await step.run('mark-source-failed', () => updateSource(source.id, { status: 'FAILED' }));
-
-      // publish the source as failed
-      await step.realtime.publish('publish-source-failed', channel.status, {
-        status: 'FAILED',
-      });
-    }
+    // publish the source status as ready
+    await step.realtime.publish('publish-source-ready', channel.status, {
+      status: 'READY',
+    });
   }
 );
