@@ -38,6 +38,7 @@ export const controller = {
       select: {
         id: true,
         title: true,
+        status: true,
         updatedAt: true,
       },
     });
@@ -279,7 +280,7 @@ export const controller = {
         // update the conversation generation status to GENERATING
         await tx.conversation.update({
           where: { id: conversationId },
-          data: { generationStatus: 'GENERATING' },
+          data: { status: 'GENERATING' },
         });
 
         // persist user message
@@ -296,10 +297,10 @@ export const controller = {
       // invoke inngest to generate a response message asynchronously
       await inngest.send({ name: 'conversation/generate.message', data: { id: conversationId } });
     } catch (error) {
-      // update the conversation generation status to FAILED
+      // update the conversation generation status to ERROR
       await prisma.conversation.update({
         where: { id: conversationId },
-        data: { generationStatus: 'FAILED' },
+        data: { status: 'ERROR' },
       });
 
       throw error;

@@ -1,5 +1,5 @@
 // internal-imports
-import { ConversationGenerationStatus } from '@/core/index.js';
+import { ConversationStatus } from '@/core/index.js';
 
 // external-imports
 import { realtime } from 'inngest';
@@ -26,10 +26,7 @@ export const generateConversationMessageChannel = realtime.channel({
     },
     status: {
       schema: z.object({
-        status: z.enum([
-          ConversationGenerationStatus.COMPLETED,
-          ConversationGenerationStatus.FAILED,
-        ]),
+        status: z.enum([ConversationStatus.READY, ConversationStatus.ERROR]),
       }),
     },
   },

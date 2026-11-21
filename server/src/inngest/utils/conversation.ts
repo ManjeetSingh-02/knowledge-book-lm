@@ -29,7 +29,7 @@ export async function fetchConversation(id: Conversation['id']) {
 // function to update conversation
 export async function updateConversation(
   id: Conversation['id'],
-  data: Partial<Pick<Conversation, 'generationStatus' | 'title'>>
+  data: Partial<Pick<Conversation, 'status' | 'title'>>
 ) {
   return prisma.conversation.update({
     where: { id },
@@ -52,7 +52,7 @@ export async function saveAssistantMessageAndUpdateConversationStatus(
 
     await tx.conversation.update({
       where: { id },
-      data: { generationStatus: 'COMPLETED' },
+      data: { status: 'READY' },
     });
   });
 }

@@ -23,7 +23,7 @@ export { validateZodSchema } from './middleware/zod.js';
 
 // prisma
 export {
-  ConversationGenerationStatus,
+  ConversationStatus,
   prisma,
   SourceStatus,
   SourceType,

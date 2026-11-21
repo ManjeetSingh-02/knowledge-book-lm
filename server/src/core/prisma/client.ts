@@ -3,7 +3,7 @@ import { env } from '../config/env.js';
 
 // external-imports
 import {
-  ConversationGenerationStatus,
+  ConversationStatus,
   PrismaClient,
   SourceStatus,
   SourceType,
@@ -22,7 +22,7 @@ const prisma = new PrismaClient({
 
 // export prisma client and types
 export {
-  ConversationGenerationStatus,
+  ConversationStatus,
   prisma,
   SourceStatus,
   SourceType,

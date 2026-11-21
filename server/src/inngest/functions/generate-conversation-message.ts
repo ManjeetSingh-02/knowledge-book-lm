@@ -26,11 +26,11 @@ export const generateConversationMessage = inngest.createFunction(
       // create a channel
       const channel = generateConversationMessageChannel({ conversationId: id });
 
-      // mark the generation status as failed
-      await updateConversation(id, { generationStatus: 'FAILED' });
+      // mark the generation status as error
+      await updateConversation(id, { status: 'ERROR' });
 
-      // publish the generation status as failed
-      await inngest.realtime.publish(channel.status, { status: 'FAILED' });
+      // publish the generation status as error
+      await inngest.realtime.publish(channel.status, { status: 'ERROR' });
     },
   },
   async ({ event, step }) => {
@@ -108,9 +108,9 @@ export const generateConversationMessage = inngest.createFunction(
       saveAssistantMessageAndUpdateConversationStatus(conversation.id, generatedText)
     );
 
-    // publish the generation status as completed
-    await step.realtime.publish('publish-generation-status-completed', channel.status, {
-      status: 'COMPLETED',
+    // publish the generation status as ready
+    await step.realtime.publish('publish-generation-status-ready', channel.status, {
+      status: 'READY',
     });
   }
 );
