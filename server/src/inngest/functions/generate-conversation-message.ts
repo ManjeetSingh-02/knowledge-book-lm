@@ -74,7 +74,9 @@ export const generateConversationMessage = inngest.createFunction(
     );
 
     // validate the messages and convert them to model messages
-    const vMessages = await validateUIMessages({ messages: conversation.messages });
+    const vMessages = await validateUIMessages({
+      messages: conversation.messages.map(m => ({ ...m, role: m.role.toLowerCase() })),
+    });
     const modelMessages = await convertToModelMessages(vMessages);
 
     // generate and stream text
